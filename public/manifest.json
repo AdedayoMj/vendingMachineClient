@@ -1,25 +1,37 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
-  "icons": [
-    {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
-    },
-    {
-      "src": "logo192.png",
-      "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
-    }
-  ],
-  "start_url": ".",
+  "name": "iVendingMachine",
+  "short_name": "iVendingMachine",
+  "theme_color": "#073642",
+  "background_color": "#073642",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "scope": "/",
+  "start_url": "/",
+
+  "icons": [{
+          "src": "maskable.png",
+          "sizes": "196x196",
+          "type": "image/png",
+          "purpose": "any maskable"
+      },
+      {
+          "src": "imak192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+      },
+      {
+          "src": "imak256.png",
+          "sizes": "256x256",
+          "type": "image/png"
+      },
+      {
+          "src": "imak384.png",
+          "sizes": "384x384",
+          "type": "image/png"
+      },
+      {
+          "src": "imak512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+      }
+  ]
 }

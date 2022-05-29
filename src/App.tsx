@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { CssBaseline } from '@mui/material';
+import { Route, Routes } from 'react-router-dom';
+import Layout from './components/layout';
+import Home from './views/home';
+import NotFound from './views/not-found';
+import SignUp from './views/signup';
+import RequireUser from './components/requireUser';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import UnauthorizePage from './views/unauthorised.page';
+import ProductPage from './views/product';
+import Login from './views/login';
 
-function App() {
+function Application() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <CssBaseline />
+      <ToastContainer />
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+
+          {/* Private Route */}
+          <Route element={<RequireUser allowedRoles={['buyer', 'seller']} />}>
+            {/* <Route path="profile" element={<ProfilePage />} /> */}
+          </Route>
+          <Route element={<RequireUser allowedRoles={['seller']} />}>
+            <Route path="product" element={<ProductPage />} />
+          </Route>
+          <Route path="unauthorized" element={<UnauthorizePage />} />
+        </Route>
+        <Route path="register" element={<SignUp />} />
+        <Route path="login" element={<Login />} />
+      </Routes>
+    </>
   );
 }
 
-export default App;
+export default Application;
