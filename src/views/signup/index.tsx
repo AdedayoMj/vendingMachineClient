@@ -12,11 +12,11 @@ import { toast } from 'react-toastify';
 
 const LoadingButton = styled(_LoadingButton)`
   padding: 0.6rem 0;
-  background-color: #f9d13e;
+  background-color: #ff8f00;
   color: #2363eb;
   font-weight: 500;
   &:hover {
-    background-color: #ebc22c;
+    background-color: #ffa940;
     transform: translateY(-2px);
   }
 `;
@@ -89,8 +89,17 @@ const SignUp: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
+
+  const signUpWithEmailAndPassword = async() => {
+    try {
+      
+    } catch (error) {
+      
+    }
+  }
+
   const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
-    // 👇 Executing the RegisterUser Mutation
+    //  Executing the RegisterUser Mutation
     registerUser(values);
   };
 
@@ -102,7 +111,7 @@ const SignUp: React.FunctionComponent = () => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100vh',
-        backgroundColor: '#2363eb',
+        backgroundColor: '#073642',
       }}
     >
       <Box
@@ -117,17 +126,17 @@ const SignUp: React.FunctionComponent = () => {
           textAlign="center"
           component="h1"
           sx={{
-            color: '#f9d13e',
+            color: '#ff8f00',
             fontSize: { xs: '2rem', md: '3rem' },
             fontWeight: 600,
             mb: 2,
             letterSpacing: 1,
           }}
         >
-          Welcome to CodevoWeb!
+          Welcome!
         </Typography>
         <Typography component="h2" sx={{ color: '#e5e7eb', mb: 2 }}>
-          Sign Up To Get Started!
+          Sign Up To Aceess the Vending Machine!
         </Typography>
 
         <FormProvider {...methods}>
@@ -144,7 +153,7 @@ const SignUp: React.FunctionComponent = () => {
               borderRadius: 2,
             }}
           >
-            <FormInput name="name" label="Full Name" />
+            <FormInput name="name" label="Username" />
             <FormInput name="password" label="Password" type="password" />
             <FormInput
               name="passwordConfirm"

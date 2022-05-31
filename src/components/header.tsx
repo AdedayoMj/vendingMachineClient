@@ -19,25 +19,29 @@ import {
   
   const LoadingButton = styled(_LoadingButton)`
     padding: 0.4rem;
-    background-color: #f9d13e;
+    background-color: #ff8f00;
     color: #2363eb;
     font-weight: 500;
     &:hover {
-      background-color: #ebc22c;
+      background-color: #ffa940;
       transform: translateY(-2px);
     }
   `;
+
   
   const Header = () => {
     const [cookies] = useCookies(['logged_in']);
     const logged_in = cookies.logged_in;
   
+  
     const navigate = useNavigate();
   
     const [logoutUser, { isLoading, isSuccess, error, isError }] =
       useLogoutUserMutation();
-    const user = useAppSelector((state) => state.userState.user);
-  
+    const user = useAppSelector((state:any) => state.userState.user);
+
+    console.log(user);
+    
     useEffect(() => {
       if (isSuccess) {
         window.location.href = '/login';
@@ -64,15 +68,16 @@ import {
     };
   
     return (
-      <AppBar position='static'>
+      <AppBar position='static' style={{ background: '#073642', boxShadow: 'none'}}>
         <Container maxWidth='lg'>
           <Toolbar>
+          <img style={{ height: 70, width: 70 }} alt="logo" src="/itest.png" />
             <Typography
-              variant='h6'
+              variant='h5'
               onClick={() => navigate('/')}
               sx={{ cursor: 'pointer' }}
             >
-              CodevoWeb
+              iMak 
             </Typography>
             <Box display='flex' sx={{ ml: 'auto' }}>
               {!logged_in && (
@@ -97,24 +102,15 @@ import {
                   Logout
                 </LoadingButton>
               )}
-              {logged_in && user?.role === 'admin' && (
+              {logged_in && user?.role === 'seller' && (
                 <LoadingButton
                   sx={{ backgroundColor: '#eee', ml: 2 }}
-                  onClick={() => navigate('/admin')}
+                  onClick={() => navigate('/product')}
                 >
-                  Admin
+                  Add Product
                 </LoadingButton>
               )}
-              <Box sx={{ ml: 4 }}>
-                <Tooltip
-                  title='Post settings'
-                  onClick={() => navigate('/profile')}
-                >
-                  <IconButton sx={{ p: 0 }}>
-                    <Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
-                  </IconButton>
-                </Tooltip>
-              </Box>
+            
             </Box>
           </Toolbar>
         </Container>

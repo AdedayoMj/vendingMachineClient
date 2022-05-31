@@ -12,28 +12,33 @@ export const authApi = createApi({
     
   reducerPath: 'authApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: `http://localhost:3360/api/auth`,
+    baseUrl: `${BASE_URL}/api/auth`,
   }),
   endpoints: (builder) => ({
     registerUser: builder.mutation<IUser, RegisterInput>({
       query(data:RegisterInput) {
-        console.log(data);
+        let postData = {
+            name:data.name,
+            password:data.password
+        }
           
         return {
           url: 'register',
           method: 'POST',
-          body: data,
+          body: postData,
         };
       },
-      transformResponse: (result: { data: { user: IUser } }) =>result.data.user,
+      transformResponse: (result: {  user: IUser }) =>result.user,
       
       
     }),
     loginUser: builder.mutation<
-      { access_token: string; status: string },
+      { token: string; message: string },
       LoginInput
     >({
       query(data) {
+    
+          
         return {
           url: 'login',
           method: 'POST',

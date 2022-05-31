@@ -1,29 +1,29 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import { setUser } from '../slices/userSlice';
-import { IUser } from './types';
+import { getAllProduct } from '../slices/productSlice';
+import { IProduct } from './types';
 
 const BASE_URL = process.env.REACT_APP_SERVER_ENDPOINT as string;
 
-export const userApi = createApi({
+export const productApi = createApi({
     reducerPath: 'userApi',
     baseQuery: fetchBaseQuery({
         baseUrl: `${BASE_URL}/api/user/`,
     }),
-    tagTypes: ['User'],
+    tagTypes: ['Product'],
     endpoints: (builder) => ({
-        getMe: builder.query<IUser, null>({
+        getMe: builder.query<IProduct, null>({
             query() {
                 return {
-                    url: 'findUser',
+                    url: 'getAllProducts',
                     credentials: 'include',
                 };
             },
-            transformResponse: (result: { user: IUser }) =>
-                result.user,
+            transformResponse: (result: { products: IProduct }) =>
+                result.products,
             async onQueryStarted(args, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
-                    dispatch(setUser(data));
+                    dispatch(getAllProduct(data));
                 } catch (error) { }
             },
         }),
