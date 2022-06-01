@@ -30,7 +30,7 @@ const LinkItem = styled(Link)`
 `;
 
 const registerSchema = object({
-  name: string().nonempty('Full name is required').max(100),
+  username: string().nonempty('Username is required').max(100),
   password: string()
     .nonempty('Password is required')
     .min(8, 'Password must be more than 8 characters')
@@ -153,7 +153,7 @@ const SignUp: React.FunctionComponent = () => {
               borderRadius: 2,
             }}
           >
-            <FormInput name="name" label="Username" />
+            <FormInput name="username" label="Username" />
             <FormInput name="password" label="Password" type="password" />
             <FormInput
               name="passwordConfirm"

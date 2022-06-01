@@ -9,106 +9,24 @@ import DepositView from '../../components/deposit';
 import { AccesptableCurrency } from '../../utils/common';
 
 const Home: React.FunctionComponent = () => {
-  const dummy = [
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-    {
-      _id: '1',
-      productName: 'hello',
-      amountAvailable: 20,
-      cost: 2.99,
-      productImage: 'yeah',
-      sellerId: 'hjsdhjskdskj',
-    },
-  ];
 
-
+  
 
   return (
     <Container
       maxWidth={false}
       sx={{
-        display: 'flex',
+        display: 'relative',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh',
+        minHeight: '100vh',
         backgroundColor: '#073642',
       
       }}
     >
-      <Container>
-        <Grid container spacing={3}>
-          <Grid item md={8} sm={12}>
+      <Container style={{paddingTop:70}}  >
+        <Grid container spacing={3} >
+          <Grid item md={8} sm={12} >
             <Card
               sx={{
                 minHeight: 200,
@@ -117,7 +35,7 @@ const Home: React.FunctionComponent = () => {
                 marginBottom: 10,
               }}
             >
-              <ProductStack product={dummy} />
+              <ProductStack />
             </Card>
         
           </Grid>
@@ -125,7 +43,7 @@ const Home: React.FunctionComponent = () => {
           <DepositView />
             <Card
             style={{padding:25}}
-              sx={{ minHeight: 200, width: '100%', backgroundColor: '#0f85a3' }}
+              sx={{ minHeight: 200, width: '100%', backgroundColor: '#0f85a3', marginBottom:40 }}
             >
               <CurrencyStack currencies={AccesptableCurrency}/>
             </Card>

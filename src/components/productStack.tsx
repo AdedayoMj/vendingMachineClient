@@ -1,24 +1,21 @@
 import Grid from '@mui/material/Grid';
 import ProductContent from './productContent';
-import {IProductIndex} from '../redux/api/types'
+import { useGetProductsQuery } from '../redux/api/productApi';
 
 
-const ProductStack: React.FunctionComponent<IProductIndex> = (props) => {
-  const {product} = props
+const ProductStack: React.FunctionComponent = (props) => {
+  const { data, isLoading, isSuccess, error, isError } = useGetProductsQuery();
  
   return (
-    <Grid container spacing={3} style={{padding:25}}>
-      {product.map((product, index) => (
-        <ProductContent
+    <Grid container spacing={3} style={{padding:25}}  >
+      {isError && ('No Product in the vending machine')}
+      {isSuccess && data &&
+      data.map((product, index) => {
+        return <ProductContent
           key={index}
-          _id= {product._id}
-          productName={product.productImage}
-          amountAvailable={product.amountAvailable}
-          cost={product.cost}
-          productImage={product.productImage}
-          sellerId={product.sellerId}
-        />
-      ))}
+          product={product}
+          loading={isLoading}
+        />})}
     </Grid>
   );
 };

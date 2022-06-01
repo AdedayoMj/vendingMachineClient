@@ -1,11 +1,26 @@
 import Grid from '@mui/material/Grid';
-import { CardHeader, Card, CardActions, CardMedia } from '@mui/material';
+import {
+  CardHeader,
+  Card,
+  CardActions,
+  CardMedia,
+  Modal,
+  Box,
+  Typography,
+} from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { IProduct } from '../redux/api/types';
 import { styled } from '@mui/material/styles';
-
+import { useNavigate } from 'react-router-dom';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
-import { useState } from 'react';
+import { toast } from 'react-toastify';
+import { useCookies } from 'react-cookie';
+import { useBuyProductMutation } from '../redux/api/productApi';
+import { useEffect, useState } from 'react';
+import { number, object, string, TypeOf, transformer } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import FormInput from './formInput';
+import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
 const LoadingButton = styled(_LoadingButton)`
   padding: 0.4rem;
@@ -18,76 +33,228 @@ const LoadingButton = styled(_LoadingButton)`
     transform: translateY(-2px);
   }
 `;
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  minWidth: 100,
+  bgcolor: 'background.paper',
+  borderRadis: 10,
+  boxShadow: 24,
+  p: 4,
+};
 
-const ProductContent: React.FunctionComponent<IProduct> = (props) => {
-  const [loading, setLoading] = useState(false);
-  const { productName, amountAvailable, cost, productImage, sellerId } = props;
+interface ProductContent {
+  product: IProduct;
+  loading: boolean;
+}
+
+const buyProductSchema = object({
+  quantity: string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
+    message: 'Expected number, received a string',
+  }),
+});
+
+export type BuyProductInput = TypeOf<typeof buyProductSchema>;
+
+const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const methods = useForm<BuyProductInput>({
+    resolver: zodResolver(buyProductSchema),
+  });
+
+  const [cookies] = useCookies(['logged_in']);
+  const logged_in = cookies.logged_in;
+
+  const { product, loading } = props;
+  const navigate = useNavigate();
+
+  const [buyProduct, { isLoading, isError, error, isSuccess }] =
+    useBuyProductMutation();
+  const {
+    reset,
+    handleSubmit,
+    formState: { isSubmitSuccessful },
+  } = methods;
+  const closeModal = () => {
+    handleClose();
+    reset();
+  };
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Thanks for your patronize');
+      closeModal();
+    }
+
+    if (isError) {
+      console.log(error);
+      if (Array.isArray((error as any).data.error)) {
+        (error as any).data.error.forEach((el: any) =>
+          toast.error(el.message, {
+            position: 'top-right',
+          })
+        );
+      } else {
+        toast.error((error as any).data, {
+          position: 'top-right',
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoading]);
+
+  const onSubmitHandler: SubmitHandler<BuyProductInput> = (values) => {
+    //  Executing the loginUser Mutation
+    const { quantity } = values;
+    buyProduct({
+      product: product,
+      values,
+    });
+  };
+
+  let price = parseFloat(String(product.cost)).toFixed(2);
+
   return (
     <Grid item sm={4} xs={6}>
-      <Card style={{ width: '100%', minHeight: 150 }}>
-        <CardHeader
-          style={{
-            backgroundColor: '#cccccc',
-            color: '#073642',
-            textAlign: 'center',
-            height: 60,
-          }}
-          title={
-            loading ? (
+      {product.amountAvailable > 0 && (
+        <Card style={{ width: '100%', minHeight: 150 }}>
+          <CardHeader
+            style={{
+              backgroundColor: '#cccccc',
+              color: '#073642',
+              textAlign: 'center',
+              fontSize: 20,
+              textTransform: 'capitalize',
+              minHeight: 40,
+            }}
+            titleTypographyProps={{ variant: 'h6' }}
+            title={
+              loading ? (
+                <Skeleton
+                  animation="wave"
+                  height={10}
+                  width="80%"
+                  style={{ marginBottom: 6, textAlign: 'center' }}
+                />
+              ) : (
+                product.productName
+              )
+            }
+            subheader={
+              loading ? (
+                <Skeleton animation="wave" height={10} width="40%" />
+              ) : (
+                `￠ ${price}`
+              )
+            }
+          />
+          {loading ? (
+            <Skeleton
+              sx={{ height: 70 }}
+              animation="wave"
+              variant="rectangular"
+            />
+          ) : (
+            <Typography
+              sx={{
+                fontWeight: 400,
+                alignContent: 'center',
+                textAlign: 'center',
+                fontSize: { xs: '0.5rem', md: '1.2rem' },
+                mb: 2,
+                letterSpacing: 1,
+              }}
+            >{`Qty: ${product.amountAvailable}`}</Typography>
+          )}
+
+          <CardActions
+            style={{
+              marginTop: 20,
+              display: 'flex',
+              flexDirection: 'column',
+              backgroundColor: '#cccccc',
+            }}
+          >
+            {loading ? (
               <Skeleton
                 animation="wave"
                 height={10}
-                width="80%"
-                style={{ marginBottom: 6, textAlign: 'center' }}
+                style={{ marginBottom: 6 }}
               />
             ) : (
-              productName
-            )
-          }
-          subheader={
-            loading ? (
-              <Skeleton animation="wave" height={10} width="40%" />
-            ) : (
-              `￠ ${cost}`
-            )
-          }
-        />
-        {loading ? (
-          <Skeleton
-            sx={{ height: 70 }}
-            animation="wave"
-            variant="rectangular"
-          />
-        ) : (
-          <CardMedia
-            component="img"
-            height="70"
-            image="/static/images/cards/paella.jpg"
-            alt={productName}
-          />
-        )}
+              logged_in && (
+                <LoadingButton sx={{ p: 0 }} onClick={handleOpen}>
+                  Buy
+                </LoadingButton>
+              )
+            )}
+          </CardActions>
+        </Card>
+      )}
+      <Modal
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
+            }}
+          >
+            <Typography
+              textAlign="center"
+              component="h1"
+              sx={{
+                color: '#ff8f00',
+                fontWeight: 400,
+                fontSize: '1rem',
+                mb: 2,
+                letterSpacing: 1,
+              }}
+            >
+              How many {`${product.productName}`} do you want to by?
+            </Typography>
 
-        <CardActions
-          style={{
-            marginTop: 20,
-            display: 'flex',
-            flexDirection: 'column',
-            backgroundColor: '#cccccc',
-          }}
-        >
-          {loading ? (
-            <Skeleton
-              animation="wave"
-              height={10}
-              style={{ marginBottom: 6 }}
-            />
-          ) : (
-            <LoadingButton sx={{ p: 0 }} onClick={() => console.log('buy')}>
-              Buy
-            </LoadingButton>
-          )}
-        </CardActions>
-      </Card>
+            <FormProvider {...methods}>
+              <Box
+                component="form"
+                onSubmit={handleSubmit(onSubmitHandler)}
+                noValidate
+                autoComplete="off"
+                maxWidth="27rem"
+                width="100%"
+                sx={{
+                  backgroundColor: '#e5e7eb',
+                  p: { xs: '1rem', sm: '1rem' },
+                  borderRadius: 2,
+                }}
+              >
+                <FormInput name="quantity" label="Quantity" type="number" />
+
+                <LoadingButton
+                  variant="contained"
+                  sx={{ mt: 1 }}
+                  fullWidth
+                  disableElevation
+                  type="submit"
+                  loading={isLoading}
+                >
+                  Buy Product
+                </LoadingButton>
+              </Box>
+            </FormProvider>
+          </Box>
+        </Box>
+      </Modal>
     </Grid>
   );
 };

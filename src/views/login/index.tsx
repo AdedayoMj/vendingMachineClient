@@ -30,7 +30,7 @@ const LinkItem = styled(Link)`
 `;
 
 const loginSchema = object({
-  name: string().nonempty('Username address is required'),
+  username: string().nonempty('Username address is required'),
   password: string()
     .nonempty('Password is required')
     .min(8, 'Password must be more than 8 characters')
@@ -40,11 +40,13 @@ const loginSchema = object({
 export type LoginInput = TypeOf<typeof loginSchema>;
 
 const Login: React.FunctionComponent = () => {
+
+  
   const methods = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
 
-  // 👇 API Login Mutation
+  //API Login Mutation
   const [loginUser, { isLoading, isError, error, isSuccess }] =
     useLoginUserMutation();
 
@@ -59,12 +61,21 @@ const Login: React.FunctionComponent = () => {
     formState: { isSubmitSuccessful },
   } = methods;
 
+
+  useEffect(()=>{
+
+  })
+
   useEffect(() => {
     if (isSuccess) {
       toast.success('You successfully logged in');
       navigate(from);
     }
+  
     if (isError) {
+  
+      
+      
       if (Array.isArray((error as any).data.error)) {
         (error as any).data.error.forEach((el: any) =>
           toast.error(el.message, {
@@ -72,7 +83,9 @@ const Login: React.FunctionComponent = () => {
           })
         );
       } else {
-        toast.error((error as any).data.message, {
+
+        
+        toast.error((error as any).data, {
           position: 'top-right',
         });
       }
@@ -146,7 +159,7 @@ const Login: React.FunctionComponent = () => {
               borderRadius: 2,
             }}
           >
-            <FormInput name="name" label="Username" />
+            <FormInput name="username" label="Username" />
             <FormInput name="password" label="Password" type="password" />
 
             <Typography sx={{ fontSize: '0.9rem', mb: '1rem' }}>

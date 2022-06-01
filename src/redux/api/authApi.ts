@@ -1,46 +1,38 @@
-  
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+
+import { createApi } from '@reduxjs/toolkit/query/react';
+import logging from '../../app/logging';
 import { LoginInput } from '../../views/login';
 import { RegisterInput } from '../../views/signup';
+import { productApi } from './productApi';
 import { IUser } from './types';
 import { userApi } from './userApi';
+import customFetchBase from './customeFetchBase';
 
-const BASE_URL = process.env.REACT_APP_SERVER_ENDPOINT as string;
 
 export const authApi = createApi({
-    
-    
+
   reducerPath: 'authApi',
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${BASE_URL}/api/auth`,
-  }),
+  baseQuery: customFetchBase,
   endpoints: (builder) => ({
     registerUser: builder.mutation<IUser, RegisterInput>({
-      query(data:RegisterInput) {
-        let postData = {
-            name:data.name,
-            password:data.password
-        }
-          
+      query(data: RegisterInput) {
+
         return {
-          url: 'register',
+          url: 'auth/register',
           method: 'POST',
-          body: postData,
+          body: data,
         };
       },
-      transformResponse: (result: {  user: IUser }) =>result.user,
-      
-      
+      transformResponse: (result: { data: { user: IUser } }) => result.data.user,
+
     }),
     loginUser: builder.mutation<
-      { token: string; message: string },
+      { access_token: string; status: string },
       LoginInput
     >({
       query(data) {
-    
-          
         return {
-          url: 'login',
+          url: 'auth/login',
           method: 'POST',
           body: data,
           credentials: 'include',
@@ -48,15 +40,20 @@ export const authApi = createApi({
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
-          await queryFulfilled;
           await dispatch(userApi.endpoints.getMe.initiate(null));
-        } catch (error) {}
+          await dispatch(productApi.endpoints.getProducts.initiate());
+          await queryFulfilled;
+          
+        
+        } catch (error) {
+          logging.error(error)
+        }
       },
     }),
     logoutUser: builder.mutation<void, void>({
       query() {
         return {
-          url: 'logout',
+          url: 'auth/logout',
           credentials: 'include',
         };
       },

@@ -1,11 +1,8 @@
 import {
     AppBar,
-    Avatar,
     Box,
     Container,
-    IconButton,
     Toolbar,
-    Tooltip,
     Typography,
   } from '@mui/material';
   import { styled } from '@mui/material/styles';
@@ -13,9 +10,10 @@ import {
   import { useCookies } from 'react-cookie';
   import { useAppSelector } from '../redux/store';
   import { useLogoutUserMutation } from '../redux/api/authApi';
-  import { useEffect } from 'react';
+  import { useEffect,useState } from 'react';
   import { toast } from 'react-toastify';
   import { LoadingButton as _LoadingButton } from '@mui/lab';
+  import FormModal from './formModal'
   
   const LoadingButton = styled(_LoadingButton)`
     padding: 0.4rem;
@@ -30,6 +28,9 @@ import {
 
   
   const Header = () => {
+    const [open, setOpen] = useState(false);
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
     const [cookies] = useCookies(['logged_in']);
     const logged_in = cookies.logged_in;
   
@@ -38,16 +39,18 @@ import {
   
     const [logoutUser, { isLoading, isSuccess, error, isError }] =
       useLogoutUserMutation();
-    const user = useAppSelector((state:any) => state.userState.user);
-
-    console.log(user);
+    const userData = useAppSelector((state:any) => state.userState);    
+    const prodata = useAppSelector((state:any) => state.productState);
+   
+      
     
     useEffect(() => {
       if (isSuccess) {
-        window.location.href = '/login';
+        navigate('/login');
       }
   
       if (isError) {
+        console.log(error);
         if (Array.isArray((error as any).data.error)) {
           (error as any).data.error.forEach((el: any) =>
             toast.error(el.message, {
@@ -55,7 +58,7 @@ import {
             })
           );
         } else {
-          toast.error((error as any).data.message, {
+          toast.error((error as any).data, {
             position: 'top-right',
           });
         }
@@ -69,6 +72,7 @@ import {
   
     return (
       <AppBar position='static' style={{ background: '#073642', boxShadow: 'none'}}>
+        <FormModal open={open} handleClose={handleClose}/>
         <Container maxWidth='lg'>
           <Toolbar>
           <img style={{ height: 70, width: 70 }} alt="logo" src="/itest.png" />
@@ -102,10 +106,10 @@ import {
                   Logout
                 </LoadingButton>
               )}
-              {logged_in && user?.role === 'seller' && (
+              {logged_in && (
                 <LoadingButton
                   sx={{ backgroundColor: '#eee', ml: 2 }}
-                  onClick={() => navigate('/product')}
+                  onClick={handleOpen}
                 >
                   Add Product
                 </LoadingButton>

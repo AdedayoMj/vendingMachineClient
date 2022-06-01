@@ -10,6 +10,7 @@ export interface IUser {
 
 
 export interface IProduct {
+  [x: string]: any;
   _id: string;
   productName: string;
   amountAvailable: number;
@@ -34,10 +35,10 @@ export type IProductIndex = {
 }
 
 export interface IButton {
-  currency: string;
+  currency: number;
 }
 
 export type IButtonIndex = {
-  currencies: string[],
+  currencies: number[],
 
 }

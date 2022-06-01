@@ -19,7 +19,8 @@ const RequireUser = ({ allowedRoles }: { allowedRoles: string[] }) => {
 
   return logged_in && allowedRoles.includes(user?.role as string) ? (
     <Outlet />
-  ) : logged_in && user ? (
+  ) :
+   logged_in && user ? (
     <Navigate to='/unauthorized' state={{ from: location }} replace />
   ) : (
     <Navigate to='/login' state={{ from: location }} replace />
