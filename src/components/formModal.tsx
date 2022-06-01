@@ -49,10 +49,14 @@ const style = {
   p: 4,
 };
 
-interface IModal {
+export interface IModal {
   open: boolean;
   handleClose: () => void;
+  handleOpen?: () => void;
+  productName?:string;
+  productId?:string;
 }
+
 const addProductSchema = object({
   productName: string({ required_error: 'Product Name is required' }).min(
     6,
@@ -124,7 +128,7 @@ const FormModal: React.FunctionComponent<IModal> = (props) => {
   }, [isSubmitSuccessful]);
 
   const onSubmitHandler: SubmitHandler<ProductInput> = (values) => {
-    //  Executing the loginUser Mutation
+   
     const dataSet ={
             sellerId: (userData.user._id).toString(),
             product: values

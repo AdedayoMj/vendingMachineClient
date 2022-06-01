@@ -31,19 +31,20 @@ function Application() {
         </Route>
         <Route
           path="register"
-          element={
-            <ProtectedRoute>
-              <SignUp />
-            </ProtectedRoute>
-          }
+          element={ <SignUp />}
+          // element={
+          //   <ProtectedRoute>
+          //     <SignUp />
+          //   </ProtectedRoute>
+          // }
         />
         <Route
-          path="login"
-          element={
-            <ProtectedRoute>
-              <Login />
-            </ProtectedRoute>
-          }
+          path="login"element={<Login />}
+          // element={
+          //   <ProtectedRoute>
+          //     <Login />
+          //   </ProtectedRoute>
+          // }
         />
       </Routes>
     </>

@@ -9,10 +9,10 @@ const ProtectedRoute = ({ redirectPath = '/', children }) => {
 
   const location = useLocation();
 
-  const { data: user } = userApi.endpoints.getMe.useQuery(null, {
-    skip: !logged_in,
-  });
-  if (logged_in && user) {
+//   const { data: user } = userApi.endpoints.getMe.useQuery(void, {
+//     skip: !logged_in,
+//   });
+  if (logged_in) {
    return  <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 

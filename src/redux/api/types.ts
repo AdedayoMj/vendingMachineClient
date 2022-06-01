@@ -28,6 +28,11 @@ export interface IProduct {
   productImage: string;
   sellerId: any;
 }
+export interface ITransact {
+  productName: string;
+  availableBalance: number;
+  totalCostOfProduuct: number;
+}
 
 export type IProductIndex = {
   product: IProduct[],

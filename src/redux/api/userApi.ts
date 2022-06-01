@@ -10,10 +10,10 @@ export const userApi = createApi({
     baseQuery: customFetchBase,
     tagTypes: ['User'],
     endpoints: (builder) => ({
-        getMe: builder.query<IUser, null>({
+        getUser: builder.mutation<IUser, void>({
             query() {
                 return {
-                    url: 'user/me',
+                    url: 'user/getUser',
                     method: 'GET',
                     credentials: 'include',
                 };
@@ -72,5 +72,6 @@ export const userApi = createApi({
 
 export const {
     useDepositUserAccountMutation,
-    useResetAccountMutation
+    useResetAccountMutation,
+    useGetUserMutation
 } = userApi;

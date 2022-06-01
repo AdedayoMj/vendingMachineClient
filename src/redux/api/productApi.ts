@@ -1,7 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ProductInput } from '../../components/formModal';
-import { setAllProduct } from '../slices/productSlice';
-import { IProduct } from './types';
+import { setAllProduct, setBoughtProduct } from '../slices/productSlice';
+import { IProduct, ITransact } from './types';
 import customFetchBase from './customeFetchBase';
 import { BuyProductInput } from '../../components/productContent';
 import { userApi } from './userApi';
@@ -13,7 +13,7 @@ export const productApi = createApi({
     baseQuery: customFetchBase,
     tagTypes: ['Product'],
     endpoints: (builder) => ({
-        getProducts: builder.query<IProduct, void>({
+        getProducts: builder.query<IProduct, null>({
             query() {
                 return {
                     url: 'product',
@@ -31,9 +31,7 @@ export const productApi = createApi({
 
         }),
         createProduct: builder.mutation<IProduct, { product: Partial<ProductInput>, sellerId: string }>({
-
             query(data) {
-
                 const newProductData = {
                     productName: data.product.productName,
                     amountAvailable: Number(data.product.amountAvailable),
@@ -47,12 +45,11 @@ export const productApi = createApi({
                     credentials: 'include',
                 };
             },
-            transformResponse: (result: { data: { product: IProduct } }) => result.data.product,
+            transformResponse: (result: { data: { products: IProduct } }) => result.data.products,
             async onQueryStarted(_args, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
-
-                    await dispatch(productApi.endpoints.getProducts.initiate());
+                    await dispatch(setAllProduct(data));
                 } catch (error) { }
             },
         }),
@@ -67,17 +64,32 @@ export const productApi = createApi({
                     credentials: 'include',
                 };
             },
-            transformResponse: (result: { data: { product: IProduct } }) => result.data.product,
+            transformResponse: (result: { data: { products: IProduct } }) => result.data.products,
             async onQueryStarted(_args, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
-                    await dispatch(userApi.endpoints.getMe.initiate(null));
-                    await dispatch(productApi.endpoints.getProducts.initiate());
+                    await dispatch(setBoughtProduct(data))
+                } catch (error) { }
+            },
+        }),
+        deleteProduct: builder.mutation<IProduct, { id: string }>({
+            query(data) {
+                return {
+                    url: `product/${data.id}`,
+                    method: 'DELETE',
+                    credentials: 'include',
+                };
+            },
+            transformResponse: (result: { data:{products: IProduct}}) => result.data.products,
+            async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+                try {
+                    const { data } = await queryFulfilled;
+                    await dispatch(setAllProduct(data));
                 } catch (error) { }
             },
         }),
     }),
 })
 
-export const { useGetProductsQuery, useCreateProductMutation, useBuyProductMutation } = productApi
+export const { useGetProductsQuery, useCreateProductMutation, useBuyProductMutation, useDeleteProductMutation } = productApi
 

@@ -11,7 +11,10 @@ import { styled } from '@mui/material/styles';
 import { useAppSelector } from '../redux/store';
 import { useCookies } from 'react-cookie';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
-import { useResetAccountMutation } from '../redux/api/userApi';
+import {
+  useResetAccountMutation,
+  useGetUserMutation,
+} from '../redux/api/userApi';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
 
@@ -32,8 +35,15 @@ const DepositView: React.FunctionComponent = () => {
   const logged_in = cookies.logged_in;
 
   let userData = useAppSelector((state: any) => state.userState);
-  console.log(userData);
+  // console.log(userData);
+  const [getUser, {}] = useGetUserMutation();
+
   let balance = parseFloat(userData.user.deposit).toFixed(2);
+
+  useEffect(() => {
+    getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [logged_in]);
 
   const [resetAccount, { isLoading, isError, error, isSuccess }] =
     useResetAccountMutation();
@@ -60,10 +70,15 @@ const DepositView: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
+  
   const handleReset = () => {
-    resetAccount({
-      deposit: 0,
-    });
+    if (userData.user.deposit > 0) {
+      resetAccount({
+        deposit: 0,
+      });
+    } else {
+      toast.warn('Insuficient funds!');
+    }
   };
   return (
     <Card style={{ width: '100%', height: 170 }}>
@@ -80,9 +95,9 @@ const DepositView: React.FunctionComponent = () => {
           sx={{
             alignContent: 'center',
             textAlign: 'center',
-            fontSize: {sx:'1.2rem', md: '2rem'},
+            fontSize: { sx: '1.2rem', md: '2rem' },
             height: 20,
-            fontWeight:600
+            fontWeight: 600,
           }}
         >
           {logged_in && balance}

@@ -9,6 +9,7 @@ import { userApi } from './userApi';
 import customFetchBase from './customeFetchBase';
 
 
+
 export const authApi = createApi({
 
   reducerPath: 'authApi',
@@ -40,10 +41,11 @@ export const authApi = createApi({
       },
       async onQueryStarted(args, { dispatch, queryFulfilled }) {
         try {
-          await dispatch(userApi.endpoints.getMe.initiate(null));
-          await dispatch(productApi.endpoints.getProducts.initiate());
           await queryFulfilled;
-          
+    
+          await dispatch(userApi.endpoints.getUser.initiate());
+          // await dispatch(productApi.endpoints.getProducts.initiate());
+
         
         } catch (error) {
           logging.error(error)

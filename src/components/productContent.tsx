@@ -15,12 +15,17 @@ import { useNavigate } from 'react-router-dom';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { toast } from 'react-toastify';
 import { useCookies } from 'react-cookie';
-import { useBuyProductMutation } from '../redux/api/productApi';
+import {
+  useBuyProductMutation,
+  useGetProductsQuery,
+} from '../redux/api/productApi';
 import { useEffect, useState } from 'react';
 import { number, object, string, TypeOf, transformer } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './formInput';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
+import { useGetUserMutation } from '../redux/api/userApi';
+import DeleteModal from './deleteModal';
 
 const LoadingButton = styled(_LoadingButton)`
   padding: 0.4rem;
@@ -60,6 +65,9 @@ export type BuyProductInput = TypeOf<typeof buyProductSchema>;
 
 const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   const [open, setOpen] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const handleDialogOpen = () => setOpenDeleteDialog(true);
+  const handleDialogClose = () => setOpenDeleteDialog(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -75,6 +83,10 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
 
   const [buyProduct, { isLoading, isError, error, isSuccess }] =
     useBuyProductMutation();
+
+  const [getUser] = useGetUserMutation();
+  // const {getProducts} = useGetProductsQuery(null)
+
   const {
     reset,
     handleSubmit,
@@ -86,6 +98,9 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   };
   useEffect(() => {
     if (isSuccess) {
+      getUser();
+      // getProducts()
+      // Promise.all([getUser(), getProducts()])
       toast.success('Thanks for your patronize');
       closeModal();
     }
@@ -106,9 +121,13 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
-
+  useEffect(() => {
+    if (isSubmitSuccessful) {
+      reset();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSubmitSuccessful]);
   const onSubmitHandler: SubmitHandler<BuyProductInput> = (values) => {
-    //  Executing the loginUser Mutation
     const { quantity } = values;
     buyProduct({
       product: product,
@@ -121,7 +140,10 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   return (
     <Grid item sm={4} xs={6}>
       {product.amountAvailable > 0 && (
-        <Card style={{ width: '100%', minHeight: 150 }}>
+        <Card
+          style={{ width: '100%', minHeight: 150 }}
+          onClick={handleDialogOpen}
+        >
           <CardHeader
             style={{
               backgroundColor: '#cccccc',
@@ -195,6 +217,13 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
           </CardActions>
         </Card>
       )}
+      <DeleteModal
+        open={openDeleteDialog}
+        handleClose={handleDialogClose}
+        handleOpen={handleDialogOpen}
+        productName={product.productName}
+        productId={product._id}
+      />
       <Modal
         open={open}
         onClose={handleClose}
