@@ -29,7 +29,7 @@ const DeleteModal: React.FunctionComponent<IModal> = (props) => {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success('Product dleted! ');
+      toast.success('Product removed from vending machine! ');
       handleClose();
     }
 

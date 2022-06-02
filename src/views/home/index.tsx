@@ -31,7 +31,7 @@ const Home: React.FunctionComponent = () => {
               sx={{
                 minHeight: 200,
                 width: '100%',
-                backgroundColor: '#0f85a3',
+                backgroundColor: '#05586e',
                 marginBottom: 10,
               }}
             >
@@ -43,7 +43,7 @@ const Home: React.FunctionComponent = () => {
           <DepositView />
             <Card
             style={{padding:25}}
-              sx={{ minHeight: 200, width: '100%', backgroundColor: '#0f85a3', marginBottom:40 }}
+              sx={{ minHeight: 200, width: '100%', backgroundColor: '#05586e', marginBottom:40 }}
             >
               <CurrencyStack currencies={AccesptableCurrency}/>
             </Card>

@@ -38,7 +38,7 @@ const DepositView: React.FunctionComponent = () => {
   // console.log(userData);
   const [getUser, {}] = useGetUserMutation();
 
-  let balance = parseFloat(userData.user.deposit).toFixed(2);
+  let balance =userData.user? parseFloat(userData.user.deposit).toFixed(2): '';
 
   useEffect(() => {
     getUser();

@@ -7,6 +7,7 @@ import {
   Modal,
   Box,
   Typography,
+  IconButton,
 } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { IProduct } from '../redux/api/types';
@@ -26,6 +27,8 @@ import FormInput from './formInput';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { useGetUserMutation } from '../redux/api/userApi';
 import DeleteModal from './deleteModal';
+import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+
 
 const LoadingButton = styled(_LoadingButton)`
   padding: 0.4rem;
@@ -99,8 +102,6 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   useEffect(() => {
     if (isSuccess) {
       getUser();
-      // getProducts()
-      // Promise.all([getUser(), getProducts()])
       toast.success('Thanks for your patronize');
       closeModal();
     }
@@ -142,7 +143,6 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
       {product.amountAvailable > 0 && (
         <Card
           style={{ width: '100%', minHeight: 150 }}
-          onClick={handleDialogOpen}
         >
           <CardHeader
             style={{
@@ -153,6 +153,11 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
               textTransform: 'capitalize',
               minHeight: 40,
             }}
+            action={
+              <IconButton aria-label="settings" onClick={handleDialogOpen}>
+                <DeleteOutlinedIcon style={{color:'red'}} />
+              </IconButton>
+            }
             titleTypographyProps={{ variant: 'h6' }}
             title={
               loading ? (
