@@ -9,12 +9,13 @@ import DepositView from '../../components/deposit';
 import { AccesptableCurrency } from '../../utils/common';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
+import { useAppSelector } from '../../redux/store';
 
 const Home: React.FunctionComponent = () => {
   const [cookies] = useCookies(['logged_in']);
   const logged_in = cookies.logged_in;
   const navigate = useNavigate();
-
+  const {role} = useAppSelector((state: any) => state.userState.user);
   useEffect(() => {
     if (!logged_in) return navigate('/login');
   }, [logged_in]);
@@ -32,7 +33,7 @@ const Home: React.FunctionComponent = () => {
     >
       <Container style={{ paddingTop: 70 }}>
         <Grid container spacing={3}>
-          <Grid item md={8} sm={12}>
+          <Grid item md={role==="buyer"?8:12} sm={12}>
             <Card
               sx={{
                 minHeight: 200,
@@ -44,7 +45,7 @@ const Home: React.FunctionComponent = () => {
               <ProductStack />
             </Card>
           </Grid>
-          <Grid item md={4} sm={12}>
+         {role==="buyer"&& <Grid item md={4} sm={12}>
             <DepositView />
             <Card
               style={{ padding: 25 }}
@@ -57,7 +58,7 @@ const Home: React.FunctionComponent = () => {
             >
               <CurrencyStack currencies={AccesptableCurrency} />
             </Card>
-          </Grid>
+          </Grid>}
         </Grid>
       </Container>
     </Container>

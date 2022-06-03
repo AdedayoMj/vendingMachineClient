@@ -8,7 +8,7 @@ import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
 import { IModal } from './formModal';
 import { Typography } from '@mui/material';
-import { useDeleteProductMutation } from '../redux/api/productApi';
+import { useDeleteProductMutation, useGetProductsMutation } from '../redux/api/productApi';
 import { useEffect } from 'react';
 import { toast } from 'react-toastify';
 
@@ -25,9 +25,11 @@ const DeleteModal: React.FunctionComponent<IModal> = (props) => {
   const { open, handleClose, productName, productId } = props;
   const [deleteProduct, { isLoading, isError, error, isSuccess }] =
     useDeleteProductMutation();
+    const [getProducts] =useGetProductsMutation();
 
   useEffect(() => {
     if (isSuccess) {
+      getProducts()
       toast.success('Product removed from vending machine! ');
       handleClose();
     }

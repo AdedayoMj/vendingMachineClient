@@ -1,17 +1,41 @@
-import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
+import {
+  AppBar,
+  Box,
+  Container,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useLogoutUserMutation } from '../redux/api/authApi';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
+import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircle from '@mui/icons-material/AccountCircle';
 
 import FormModal from './formModal';
 import { LoadingButtonHeader } from './button';
+import { useAppSelector } from '../redux/store';
 
 const Header = () => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const { role, username } = useAppSelector(
+    (state: any) => state.userState.user
+  );
+  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseInfo = () => {
+    setAnchorEl(null);
+  };
+
   const [cookies] = useCookies(['logged_in']);
   const logged_in = cookies.logged_in;
 
@@ -95,6 +119,39 @@ const Header = () => {
               >
                 Add Product
               </LoadingButtonHeader>
+            )}
+            {logged_in && (
+              <div>
+                <IconButton
+               
+               style={{height:40, width:40, marginLeft:10}}
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle style={{height:40, width:40}} />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleCloseInfo}
+                >
+                  <MenuItem onClick={handleCloseInfo}>{`UserName: ${username}`}</MenuItem>
+                  <MenuItem onClick={handleCloseInfo}>{`Role: ${role}`}</MenuItem>
+                </Menu>
+              </div>
             )}
           </Box>
         </Toolbar>

@@ -1,11 +1,14 @@
 import Grid from '@mui/material/Grid';
 import ProductContent from './productContent';
-import { useGetProductsQuery } from '../redux/api/productApi';
+import { useGetProductsMutation } from '../redux/api/productApi';
 import { Typography } from '@mui/material';
+import { useAppSelector } from '../redux/store';
 
 const ProductStack: React.FunctionComponent = (props) => {
-  const { data, isLoading, isSuccess, isError } = useGetProductsQuery(null);
-  const prodData = data?.filter((dat) => dat.amountAvailable > 0);
+  const [get,{ isLoading, isError }] = useGetProductsMutation();
+
+  let productData = useAppSelector((state: any) => state.productState);
+
 
   return (
     <Grid container spacing={3} style={{ padding: 25 }}>
@@ -14,13 +17,17 @@ const ProductStack: React.FunctionComponent = (props) => {
           Vending machine products loading...
         </Typography>
       )}
-      {isSuccess &&
-        data &&
-        prodData.map((product, index) => {
+      {productData.products? (
+        productData.products?.map((product, index) => {
           return (
             <ProductContent key={index} product={product} loading={isLoading} />
           );
-        })}
+        })
+      ) : (
+        <Typography style={{ fontSize: 20, margin: 'auto', marginTop: 30, color:'white' }}>
+         No products available
+        </Typography>
+      )}
     </Grid>
   );
 };

@@ -3,7 +3,6 @@ import {
   CardHeader,
   Card,
   CardActions,
-
   Modal,
   Box,
   Typography,
@@ -14,7 +13,10 @@ import { IProduct } from '../redux/api/types';
 
 import { toast } from 'react-toastify';
 import { useCookies } from 'react-cookie';
-import { useBuyProductMutation } from '../redux/api/productApi';
+import {
+  useBuyProductMutation,
+  useGetProductsMutation,
+} from '../redux/api/productApi';
 import { useEffect, useState } from 'react';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -24,6 +26,7 @@ import { useGetUserMutation, useGetChangeMutation } from '../redux/api/userApi';
 import DeleteModal from './deleteModal';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { LoadingButton } from './button';
+import { useAppSelector } from '../redux/store';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -55,12 +58,15 @@ export type BuyProductInput = TypeOf<typeof buyProductSchema>;
 const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   const [open, setOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const { role } = useAppSelector((state: any) => state.userState.user);
   const handleDialogOpen = () => {
     reset();
     setOpenDeleteDialog(true);
   };
   const handleDialogClose = () => setOpenDeleteDialog(false);
-  const handleOpen = () => setOpen(true);
+  const handleOpen = () => {
+    setOpen(true);
+  };
   const handleClose = () => setOpen(false);
 
   const methods = useForm<BuyProductInput>({
@@ -72,11 +78,12 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
 
   const { product, loading } = props;
 
-  const [buyProduct, {isLoading, isError, error, isSuccess }] =
+  const [buyProduct, { isLoading, isError, error, isSuccess }] =
     useBuyProductMutation();
 
   const [getUser] = useGetUserMutation();
   const [getChange] = useGetChangeMutation();
+  const [getProducts] = useGetProductsMutation();
 
   const {
     reset,
@@ -90,7 +97,7 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   };
   useEffect(() => {
     if (isSuccess) {
-      Promise.all([getUser(), getChange()]);
+      Promise.all([getProducts(), getUser(), getChange()]);
 
       toast.success('Thanks for your patronize');
       handleModelClose();
@@ -129,7 +136,7 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   let price = parseFloat(String(product.cost)).toFixed(2);
 
   return (
-    <Grid item sm={4} xs={6}>
+    <Grid item md={role === 'buyer' ? 4 : 3} sm={4} xs={6}>
       {product.amountAvailable > 0 && (
         <Card style={{ width: '100%', minHeight: 150 }}>
           <CardHeader
@@ -179,7 +186,7 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
                 fontWeight: 400,
                 alignContent: 'center',
                 textAlign: 'center',
-                fontSize: { xs: '0.5rem', md: '1.2rem' },
+                fontSize: { xs: '1rem', md: '1.2rem' },
                 mb: 2,
                 letterSpacing: 1,
               }}
@@ -273,7 +280,6 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
               </Box>
             </FormProvider>
           </Box>
-          
         </Box>
       </Modal>
     </Grid>

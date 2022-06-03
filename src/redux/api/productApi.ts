@@ -13,7 +13,7 @@ export const productApi = createApi({
     baseQuery: customFetchBase,
     tagTypes: ['Product'],
     endpoints: (builder) => ({
-        getProducts: builder.query<IProduct, null>({
+        getProducts: builder.mutation<IProduct, void>({
             query() {
                 return {
                     url: 'product',
@@ -94,5 +94,5 @@ export const productApi = createApi({
     }),
 })
 
-export const { useGetProductsQuery, useCreateProductMutation, useBuyProductMutation, useDeleteProductMutation } = productApi
+export const { useGetProductsMutation, useCreateProductMutation, useBuyProductMutation, useDeleteProductMutation } = productApi
 
