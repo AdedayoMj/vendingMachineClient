@@ -1,14 +1,10 @@
 import {
   Typography,
-  CircularProgress,
-  Box,
   CardHeader,
   Card,
   CardContent,
   CardActions,
-  Grid,
 } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import { useAppSelector } from '../redux/store';
 import { useCookies } from 'react-cookie';
 import {
@@ -39,13 +35,14 @@ const DepositView: React.FunctionComponent = () => {
     Promise.all([getUser(), getChange()])
 
   }, [logged_in]);
-  const [buyProduct, { data }] = useBuyProductMutation();
+  
   const [resetAccount, { isLoading, isError, error, isSuccess }] =
     useResetAccountMutation();
 
   useEffect(() => {
     if (isSuccess) {
       toast.success('Account balance withdrawn');
+      getChange()
     }
 
     if (isError) {
@@ -106,7 +103,7 @@ const DepositView: React.FunctionComponent = () => {
             marginTop: 3,
           }}
         >
-          {logged_in && <Typography>{`Coins: ${userData.coinChanges}`}</Typography> }
+          {(logged_in && userData.coinChanges.length>0)? <Typography>{`Coins: ${userData.coinChanges}`}</Typography>:<Typography>{`Coins: 0`}</Typography> }
         </Typography>
         
       </CardContent>
