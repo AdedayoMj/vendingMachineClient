@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import UnauthorizePage from './views/unauthorised.page';
 import Login from './views/login';
 import ProtectedRoute from './components/protectedRout';
-import { useCookies } from 'react-cookie';
+
 
 function Application() {
   return (
@@ -17,7 +17,7 @@ function Application() {
       <ToastContainer />
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
+          <Route index element={<ProtectedRoute><Home/></ProtectedRoute>} />
 
           {/* Private Route */}
           {/* <Route element={<RequireUser allowedRoles={['buyer', 'seller']} />}>
@@ -28,7 +28,7 @@ function Application() {
           </Route> */}
           <Route path="*" element={<UnauthorizePage />} />
           <Route path="unauthorized" element={<UnauthorizePage />} />
-       
+          </Route>
         <Route
           path="register"
           element={ <SignUp />}
@@ -46,7 +46,7 @@ function Application() {
           //   </ProtectedRoute>
           // }
         />
-         </Route>
+       
       </Routes>
     </>
   );

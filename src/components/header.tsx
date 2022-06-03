@@ -1,8 +1,6 @@
 import { AppBar, Box, Container, Toolbar, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
-import { useAppSelector } from '../redux/store';
 import { useLogoutUserMutation } from '../redux/api/authApi';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
@@ -21,8 +19,6 @@ const Header = () => {
 
   const [logoutUser, { isLoading, isSuccess, error, isError }] =
     useLogoutUserMutation();
-  const userData = useAppSelector((state: any) => state.userState);
-  const prodata = useAppSelector((state: any) => state.productState);
 
   useEffect(() => {
     if (isSuccess) {

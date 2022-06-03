@@ -14,7 +14,6 @@ import {
 } from '../redux/api/userApi';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
-import { useBuyProductMutation } from '../redux/api/productApi';
 import { LoadingButton } from './button';
 
 const DepositView: React.FunctionComponent = () => {
@@ -23,8 +22,8 @@ const DepositView: React.FunctionComponent = () => {
 
   let userData = useAppSelector((state: any) => state.userState);
 
-  const [getUser, {}] = useGetUserMutation();
-  const [getChange, {}] = useGetChangeMutation();
+  const [getUser] = useGetUserMutation();
+  const [getChange] = useGetChangeMutation();
 
 
   // let balance = userData.user
@@ -32,8 +31,8 @@ const DepositView: React.FunctionComponent = () => {
   //   : '';
 
   useEffect(() => {
+     // eslint-disable-next-line react-hooks/exhaustive-deps
     Promise.all([getUser(), getChange()])
-
   }, [logged_in]);
   
   const [resetAccount, { isLoading, isError, error, isSuccess }] =
@@ -124,7 +123,7 @@ const DepositView: React.FunctionComponent = () => {
             collect
           </LoadingButton>
        
-          // </Box>
+   
         )}
       </CardActions>
     </Card>
@@ -132,6 +131,4 @@ const DepositView: React.FunctionComponent = () => {
 };
 
 export default DepositView;
-function useGetCoinChangeMutation(): [any, {}] {
-  throw new Error('Function not implemented.');
-}
+

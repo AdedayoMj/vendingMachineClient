@@ -1,15 +1,15 @@
-import { Box, Checkbox, Container, FormControlLabel, Typography } from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from '../../components/formInput';
 import { useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate, useLocation } from 'react-router-dom';
 import { useRegisterUserMutation } from '../../redux/api/authApi';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { toast } from 'react-toastify';
-import { Select } from '@material-ui/core';
+import { useCookies } from 'react-cookie';
 import FormSelect from '../../components/formSlect';
 
 const LoadingButton = styled(_LoadingButton)`
@@ -55,12 +55,14 @@ const SignUp: React.FunctionComponent = () => {
   const [registerUser, { isLoading, isSuccess, error, isError }] =
     useRegisterUserMutation();
 
+  const [cookies] = useCookies(['logged_in']);
+  const logged_in = cookies.logged_in;
   const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     reset,
     handleSubmit,
-    register,
     formState: { isSubmitSuccessful },
   } = methods;
 
@@ -93,14 +95,14 @@ const SignUp: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
 
-
-
   const onSubmitHandler: SubmitHandler<RegisterInput> = (values) => {
     //  Executing the RegisterUser Mutation
-    console.log(values);
-    
     registerUser(values);
   };
+
+  if (logged_in) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
 
   return (
     <Container
@@ -119,7 +121,6 @@ const SignUp: React.FunctionComponent = () => {
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
-          marginTop:-20
         }}
       >
         <Typography
@@ -160,8 +161,8 @@ const SignUp: React.FunctionComponent = () => {
               label="Confirm Password"
               type="password"
             />
-            
-            < FormSelect name="role" label="Role"/>
+
+            <FormSelect name="role" label="Role" />
             <Typography sx={{ fontSize: '0.9rem', mb: '1rem' }}>
               Already have an account?{' '}
               <LinkItem to="/login">Login Here</LinkItem>

@@ -3,7 +3,6 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import Slide from '@mui/material/Slide';
 import { TransitionProps } from '@mui/material/transitions';
@@ -23,7 +22,7 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const DeleteModal: React.FunctionComponent<IModal> = (props) => {
-  const { open, handleClose, handleOpen, productName, productId } = props;
+  const { open, handleClose, productName, productId } = props;
   const [deleteProduct, { isLoading, isError, error, isSuccess }] =
     useDeleteProductMutation();
 

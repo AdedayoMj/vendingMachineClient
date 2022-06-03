@@ -5,10 +5,11 @@ import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from '../../components/formInput';
 import { useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, Navigate, useNavigate } from 'react-router-dom';
 import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { toast } from 'react-toastify';
 import { useLoginUserMutation } from '../../redux/api/authApi';
+import { useCookies } from 'react-cookie';
 
 const LoadingButton = styled(_LoadingButton)`
   padding: 0.6rem 0;
@@ -40,8 +41,6 @@ const loginSchema = object({
 export type LoginInput = TypeOf<typeof loginSchema>;
 
 const Login: React.FunctionComponent = () => {
-
-  
   const methods = useForm<LoginInput>({
     resolver: zodResolver(loginSchema),
   });
@@ -49,10 +48,9 @@ const Login: React.FunctionComponent = () => {
   //API Login Mutation
   const [loginUser, { isLoading, isError, error, isSuccess }] =
     useLoginUserMutation();
-  
-    
 
-
+  const [cookies] = useCookies(['logged_in']);
+  const logged_in = cookies.logged_in;
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -64,19 +62,15 @@ const Login: React.FunctionComponent = () => {
     formState: { isSubmitSuccessful },
   } = methods;
 
-
-  useEffect(()=>{
-
-  })
+  useEffect(() => {});
 
   useEffect(() => {
     if (isSuccess) {
       toast.success('You successfully logged in');
       navigate(from);
     }
-  
+
     if (isError) {
-  
       if (Array.isArray((error as any).data.error)) {
         (error as any).data.error.forEach((el: any) =>
           toast.error(el.message, {
@@ -84,8 +78,6 @@ const Login: React.FunctionComponent = () => {
           })
         );
       } else {
-
-        
         toast.error((error as any).data, {
           position: 'top-right',
         });
@@ -103,10 +95,12 @@ const Login: React.FunctionComponent = () => {
 
   const onSubmitHandler: SubmitHandler<LoginInput> = (values) => {
     //  Executing the loginUser Mutation
-    
-    loginUser(values);
 
+    loginUser(values);
   };
+  if (logged_in) {
+    return <Navigate to="/" state={{ from: location }} replace />;
+  }
 
   return (
     <Container
@@ -125,7 +119,6 @@ const Login: React.FunctionComponent = () => {
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
-          marginTop:-20
         }}
       >
         <Typography

@@ -3,7 +3,6 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import logging from '../../app/logging';
 import { LoginInput } from '../../views/login';
 import { RegisterInput } from '../../views/signup';
-import { productApi } from './productApi';
 import { IUser } from './types';
 import { userApi } from './userApi';
 import customFetchBase from './customeFetchBase';

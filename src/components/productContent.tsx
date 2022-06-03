@@ -3,7 +3,7 @@ import {
   CardHeader,
   Card,
   CardActions,
-  CardMedia,
+
   Modal,
   Box,
   Typography,
@@ -23,7 +23,6 @@ import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { useGetUserMutation, useGetChangeMutation } from '../redux/api/userApi';
 import DeleteModal from './deleteModal';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
-import { useAppSelector } from '../redux/store';
 import { LoadingButton } from './button';
 
 const style = {
@@ -38,7 +37,7 @@ const style = {
   p: 4,
 };
 
-interface ProductContent {
+interface ProductContentI {
   product: IProduct;
   loading: boolean;
 }
@@ -53,7 +52,7 @@ const buyProductSchema = object({
 
 export type BuyProductInput = TypeOf<typeof buyProductSchema>;
 
-const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
+const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   const [open, setOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const handleDialogOpen = () => {
@@ -73,7 +72,7 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
 
   const { product, loading } = props;
 
-  const [buyProduct, { data, isLoading, isError, error, isSuccess }] =
+  const [buyProduct, {isLoading, isError, error, isSuccess }] =
     useBuyProductMutation();
 
   const [getUser] = useGetUserMutation();
@@ -274,7 +273,7 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
               </Box>
             </FormProvider>
           </Box>
-          )
+          
         </Box>
       </Modal>
     </Grid>

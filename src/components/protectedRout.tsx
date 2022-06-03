@@ -1,18 +1,16 @@
 import { useCookies } from 'react-cookie';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { userApi } from '../redux/api/userApi';
+import { Navigate, useLocation } from 'react-router-dom';
 
 
-const ProtectedRoute = ({ redirectPath = '/', children }) => {
+
+const ProtectedRoute = ({ redirectPath = '/login', children }) => {
   const [cookies] = useCookies(['logged_in']);
   const logged_in = cookies.logged_in;
 
   const location = useLocation();
 
-//   const { data: user } = userApi.endpoints.getMe.useQuery(void, {
-//     skip: !logged_in,
-//   });
-  if (logged_in) {
+
+  if (!logged_in) {
    return  <Navigate to={redirectPath} state={{ from: location }} replace />;
   }
 

@@ -2,29 +2,18 @@ import * as React from 'react';
 
 import Modal from '@mui/material/Modal';
 
-import { Box, Container, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { Box, Typography } from '@mui/material';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { number, object, string, TypeOf, transformer } from 'zod';
+import {  object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './formInput';
 import { useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useCreateProductMutation, useGetProductsQuery } from '../redux/api/productApi';
+import { useCreateProductMutation,  } from '../redux/api/productApi';
 import { useAppSelector } from '../redux/store';
-import { useDispatch } from 'react-redux';
+
 import { LoadingButton } from './button';
 
-
-
-const LinkItem = styled(Link)`
-  text-decoration: none;
-  color: #073642;
-  &:hover {
-    text-decoration: underline;
-  }
-`;
 
 const style = {
   position: 'absolute' as 'absolute',

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IProduct,IQauntity,ITransact } from '../api/types';
+import { IProduct,IQauntity } from '../api/types';
 
 interface IProductState {
     product: IProduct | null;
