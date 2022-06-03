@@ -1,50 +1,45 @@
 import {
   Typography,
   CircularProgress,
-  Container,
+  Box,
   CardHeader,
   Card,
   CardContent,
   CardActions,
+  Grid,
 } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useAppSelector } from '../redux/store';
 import { useCookies } from 'react-cookie';
-import { LoadingButton as _LoadingButton } from '@mui/lab';
 import {
   useResetAccountMutation,
   useGetUserMutation,
+  useGetChangeMutation,
 } from '../redux/api/userApi';
 import { toast } from 'react-toastify';
 import { useEffect } from 'react';
-
-const LoadingButton = styled(_LoadingButton)`
-  padding: 0.4rem;
-  background-color: #ff8f00;
-  color: #2363eb;
-  font-weight: 500;
-  height: 40px;
-  &:hover {
-    background-color: #ffa940;
-    transform: translateY(-2px);
-  }
-`;
+import { useBuyProductMutation } from '../redux/api/productApi';
+import { LoadingButton } from './button';
 
 const DepositView: React.FunctionComponent = () => {
   const [cookies] = useCookies(['logged_in']);
   const logged_in = cookies.logged_in;
 
   let userData = useAppSelector((state: any) => state.userState);
-  // console.log(userData);
-  const [getUser, {}] = useGetUserMutation();
 
-  let balance =userData.user? parseFloat(userData.user.deposit).toFixed(2): '';
+  const [getUser, {}] = useGetUserMutation();
+  const [getChange, {}] = useGetChangeMutation();
+
+
+  // let balance = userData.user
+  //   ? parseFloat(userData.user.deposit).toFixed(2)
+  //   : '';
 
   useEffect(() => {
-    getUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [logged_in]);
+    Promise.all([getUser(), getChange()])
 
+  }, [logged_in]);
+  const [buyProduct, { data }] = useBuyProductMutation();
   const [resetAccount, { isLoading, isError, error, isSuccess }] =
     useResetAccountMutation();
 
@@ -70,7 +65,6 @@ const DepositView: React.FunctionComponent = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
 
-  
   const handleReset = () => {
     if (userData.user.deposit > 0) {
       resetAccount({
@@ -81,14 +75,14 @@ const DepositView: React.FunctionComponent = () => {
     }
   };
   return (
-    <Card style={{ width: '100%', height: 170 }}>
+    <Card style={{ width: '100%', minHeight: 200 }}>
       <CardHeader
         style={{
-          backgroundColor: '#ff8f00',
+          backgroundColor: '#cccccc',
           color: '#073642',
           textAlign: 'center',
         }}
-        title="Deposit Balance"
+        title="Account Balance"
       />
       <CardContent>
         <Typography
@@ -100,12 +94,29 @@ const DepositView: React.FunctionComponent = () => {
             fontWeight: 600,
           }}
         >
-          {logged_in && balance}
+          {logged_in && `￠ ${userData.user.deposit}`}
         </Typography>
+        <Typography
+          sx={{
+            alignContent: 'center',
+            textAlign: 'center',
+            fontSize: { sx: '1.3rem', md: '1.3rem' },
+            height: 20,
+            fontWeight: 400,
+            marginTop: 3,
+          }}
+        >
+          {logged_in && <Typography>{`Coins: ${userData.coinChanges}`}</Typography> }
+        </Typography>
+        
       </CardContent>
       <CardActions>
+        
         {logged_in && (
-          <LoadingButton
+          // <Box>
+            
+    
+            <LoadingButton
             style={{
               marginLeft: 'auto',
               marginRight: 20,
@@ -115,6 +126,8 @@ const DepositView: React.FunctionComponent = () => {
           >
             collect
           </LoadingButton>
+       
+          // </Box>
         )}
       </CardActions>
     </Card>
@@ -122,3 +135,6 @@ const DepositView: React.FunctionComponent = () => {
 };
 
 export default DepositView;
+function useGetCoinChangeMutation(): [any, {}] {
+  throw new Error('Function not implemented.');
+}

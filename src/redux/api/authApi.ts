@@ -10,6 +10,7 @@ import customFetchBase from './customeFetchBase';
 
 
 
+
 export const authApi = createApi({
 
   reducerPath: 'authApi',
@@ -44,7 +45,7 @@ export const authApi = createApi({
           await queryFulfilled;
     
           await dispatch(userApi.endpoints.getUser.initiate());
-          // await dispatch(productApi.endpoints.getProducts.initiate());
+          await dispatch(userApi.endpoints.getChange.initiate());
 
         
         } catch (error) {

@@ -1,34 +1,24 @@
 import Grid from '@mui/material/Grid';
 import { styled } from '@mui/material/styles';
 import { IButton } from '../redux/api/types';
-import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { object, number, TypeOf } from 'zod';
-import { useDepositUserAccountMutation } from '../redux/api/userApi';
+import { useDepositUserAccountMutation, useGetChangeMutation } from '../redux/api/userApi';
 import { useEffect } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'react-toastify';
+import { LoadingButton } from './button';
 
-const LoadingButton = styled(_LoadingButton)`
-  padding: 0.4rem;
-  background-color: #ff8f00;
-  color: #2363eb;
-  font-weight: 500;
-  height: 40px;
-  &:hover {
-    background-color: #ffa940;
-    transform: translateY(-2px);
-  }
-`;
 
 const CurrencyButton: React.FunctionComponent<IButton> = (props) => {
   const [depositUserAccount, { isLoading, isSuccess, error, isError }] =
     useDepositUserAccountMutation();
-
+    const [getChange] = useGetChangeMutation();
   const { currency } = props;
 
   useEffect(() => {
     if (isSuccess) {
+      getChange()
       toast.success('Coin added to account');
     }
 

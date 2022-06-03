@@ -12,18 +12,18 @@ import { useLoginUserMutation } from '../../redux/api/authApi';
 
 const LoadingButton = styled(_LoadingButton)`
   padding: 0.6rem 0;
-  background-color: #ff8f00;
-  color: #2363eb;
+  background-color: #073642;
+  color: white;
   font-weight: 500;
   &:hover {
-    background-color: #ffa940;
+    background-color: #05586e;
     transform: translateY(-2px);
   }
 `;
 
 const LinkItem = styled(Link)`
   text-decoration: none;
-  color: #2363eb;
+  color: #073642;
   &:hover {
     text-decoration: underline;
   }
@@ -49,6 +49,9 @@ const Login: React.FunctionComponent = () => {
   //API Login Mutation
   const [loginUser, { isLoading, isError, error, isSuccess }] =
     useLoginUserMutation();
+  
+    
+
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -74,8 +77,6 @@ const Login: React.FunctionComponent = () => {
   
     if (isError) {
   
-      
-      
       if (Array.isArray((error as any).data.error)) {
         (error as any).data.error.forEach((el: any) =>
           toast.error(el.message, {
@@ -124,13 +125,14 @@ const Login: React.FunctionComponent = () => {
           justifyContent: 'center',
           alignItems: 'center',
           flexDirection: 'column',
+          marginTop:-20
         }}
       >
         <Typography
           textAlign="center"
           component="h1"
           sx={{
-            color: '#ff8f00',
+            color: 'white',
             fontWeight: 600,
             fontSize: { xs: '2rem', md: '3rem' },
             mb: 2,

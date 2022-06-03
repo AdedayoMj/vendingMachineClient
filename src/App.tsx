@@ -28,7 +28,7 @@ function Application() {
           </Route> */}
           <Route path="*" element={<UnauthorizePage />} />
           <Route path="unauthorized" element={<UnauthorizePage />} />
-        </Route>
+       
         <Route
           path="register"
           element={ <SignUp />}
@@ -46,6 +46,7 @@ function Application() {
           //   </ProtectedRoute>
           // }
         />
+         </Route>
       </Routes>
     </>
   );

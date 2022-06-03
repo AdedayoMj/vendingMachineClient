@@ -8,6 +8,10 @@ export interface IUser {
   __v: number;
 }
 
+export interface IChange {
+  coinChanges: number[];
+}
+
 
 export interface IProduct {
   [x: string]: any;
@@ -37,6 +41,16 @@ export interface ITransact {
 export type IProductIndex = {
   product: IProduct[],
 
+}
+export type IQauntity = {
+  _id: string;
+  productName: string;
+  amountAvailable: number;
+  cost: number;
+  productImage: string;
+  sellerId: any;
+  totalprice: number,
+  availableChange: number[],
 }
 
 export interface IButton {

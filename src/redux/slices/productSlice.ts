@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IProduct,ITransact } from '../api/types';
+import { IProduct,IQauntity,ITransact } from '../api/types';
 
 interface IProductState {
     product: IProduct | null;
-    transaction: IProduct | null;
+    transaction: Partial<IQauntity>|null;
 }
 
 const initialState: IProductState = {
@@ -18,8 +18,8 @@ export const productSlice = createSlice({
         setAllProduct: (state: any, action: PayloadAction<IProduct>) => {
             state.products = action.payload;
         },
-        setBoughtProduct: (state: any, action: PayloadAction<IProduct>) => {
-            state.products = action.payload;
+        setBoughtProduct: (state: any, action: PayloadAction<Partial<IQauntity>>) => {
+            state.transaction = action.payload;
         },
     },
 });

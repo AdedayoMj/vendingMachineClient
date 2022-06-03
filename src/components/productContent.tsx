@@ -11,36 +11,21 @@ import {
 } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { IProduct } from '../redux/api/types';
-import { styled } from '@mui/material/styles';
-import { useNavigate } from 'react-router-dom';
-import { LoadingButton as _LoadingButton } from '@mui/lab';
+
 import { toast } from 'react-toastify';
 import { useCookies } from 'react-cookie';
-import {
-  useBuyProductMutation,
-  useGetProductsQuery,
-} from '../redux/api/productApi';
+import { useBuyProductMutation } from '../redux/api/productApi';
 import { useEffect, useState } from 'react';
-import { number, object, string, TypeOf, transformer } from 'zod';
+import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './formInput';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { useGetUserMutation } from '../redux/api/userApi';
+import { useGetUserMutation, useGetChangeMutation } from '../redux/api/userApi';
 import DeleteModal from './deleteModal';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
+import { useAppSelector } from '../redux/store';
+import { LoadingButton } from './button';
 
-
-const LoadingButton = styled(_LoadingButton)`
-  padding: 0.4rem;
-  background-color: #ff8f00;
-  color: #2363eb;
-  font-weight: 500;
-  height: 40px;
-  &:hover {
-    background-color: #ffa940;
-    transform: translateY(-2px);
-  }
-`;
 const style = {
   position: 'absolute' as 'absolute',
   top: '50%',
@@ -59,9 +44,11 @@ interface ProductContent {
 }
 
 const buyProductSchema = object({
-  quantity: string().refine((val) => !Number.isNaN(parseInt(val, 10)), {
-    message: 'Expected number, received a string',
-  }),
+  quantity: string()
+    .min(1, 'Quantity is required')
+    .refine((val) => !Number.isNaN(parseInt(val, 10)), {
+      message: 'Expected number, received a string',
+    }),
 });
 
 export type BuyProductInput = TypeOf<typeof buyProductSchema>;
@@ -69,7 +56,10 @@ export type BuyProductInput = TypeOf<typeof buyProductSchema>;
 const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   const [open, setOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const handleDialogOpen = () => setOpenDeleteDialog(true);
+  const handleDialogOpen = () => {
+    reset();
+    setOpenDeleteDialog(true);
+  };
   const handleDialogClose = () => setOpenDeleteDialog(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -82,28 +72,29 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   const logged_in = cookies.logged_in;
 
   const { product, loading } = props;
-  const navigate = useNavigate();
 
-  const [buyProduct, { isLoading, isError, error, isSuccess }] =
+  const [buyProduct, { data, isLoading, isError, error, isSuccess }] =
     useBuyProductMutation();
 
   const [getUser] = useGetUserMutation();
-  // const {getProducts} = useGetProductsQuery(null)
+  const [getChange] = useGetChangeMutation();
 
   const {
     reset,
     handleSubmit,
     formState: { isSubmitSuccessful },
   } = methods;
-  const closeModal = () => {
-    handleClose();
+
+  const handleModelClose = () => {
     reset();
+    handleClose();
   };
   useEffect(() => {
     if (isSuccess) {
-      getUser();
+      Promise.all([getUser(), getChange()]);
+
       toast.success('Thanks for your patronize');
-      closeModal();
+      handleModelClose();
     }
 
     if (isError) {
@@ -129,10 +120,10 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSubmitSuccessful]);
   const onSubmitHandler: SubmitHandler<BuyProductInput> = (values) => {
-    const { quantity } = values;
+    // const { quantity } = values;
     buyProduct({
       product: product,
-      values,
+      quantity: values,
     });
   };
 
@@ -141,9 +132,7 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
   return (
     <Grid item sm={4} xs={6}>
       {product.amountAvailable > 0 && (
-        <Card
-          style={{ width: '100%', minHeight: 150 }}
-        >
+        <Card style={{ width: '100%', minHeight: 150 }}>
           <CardHeader
             style={{
               backgroundColor: '#cccccc',
@@ -155,7 +144,7 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
             }}
             action={
               <IconButton aria-label="settings" onClick={handleDialogOpen}>
-                <DeleteOutlinedIcon style={{color:'red'}} />
+                <DeleteOutlinedIcon style={{ color: 'red' }} />
               </IconButton>
             }
             titleTypographyProps={{ variant: 'h6' }}
@@ -248,7 +237,7 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
               textAlign="center"
               component="h1"
               sx={{
-                color: '#ff8f00',
+                color: '#073642',
                 fontWeight: 400,
                 fontSize: '1rem',
                 mb: 2,
@@ -257,7 +246,6 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
             >
               How many {`${product.productName}`} do you want to by?
             </Typography>
-
             <FormProvider {...methods}>
               <Box
                 component="form"
@@ -273,7 +261,6 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
                 }}
               >
                 <FormInput name="quantity" label="Quantity" type="number" />
-
                 <LoadingButton
                   variant="contained"
                   sx={{ mt: 1 }}
@@ -287,6 +274,7 @@ const ProductContent: React.FunctionComponent<ProductContent> = (props) => {
               </Box>
             </FormProvider>
           </Box>
+          )
         </Box>
       </Modal>
     </Grid>

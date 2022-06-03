@@ -1,10 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { ProductInput } from '../../components/formModal';
 import { setAllProduct, setBoughtProduct } from '../slices/productSlice';
-import { IProduct, ITransact } from './types';
+import { IProduct, IQauntity } from './types';
 import customFetchBase from './customeFetchBase';
 import { BuyProductInput } from '../../components/productContent';
-import { userApi } from './userApi';
+
 
 
 
@@ -53,18 +53,21 @@ export const productApi = createApi({
                 } catch (error) { }
             },
         }),
-        buyProduct: builder.mutation<IProduct, { product: IProduct, values: {} }>({
+        buyProduct: builder.mutation<Partial<IQauntity>, { product: IProduct, quantity: BuyProductInput }>({
 
             query(data) {
+                const newData = {
+                    quantity: Number(data.quantity.quantity)
+                }
 
                 return {
                     url: `product/buy/${data.product._id}`,
                     method: 'POST',
-                    body: data.values,
+                    body: newData,
                     credentials: 'include',
                 };
             },
-            transformResponse: (result: { data: { products: IProduct } }) => result.data.products,
+            transformResponse: (result: { data: { products: Partial<IQauntity> } }) => result.data.products,
             async onQueryStarted(_args, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;
@@ -80,7 +83,7 @@ export const productApi = createApi({
                     credentials: 'include',
                 };
             },
-            transformResponse: (result: { data:{products: IProduct}}) => result.data.products,
+            transformResponse: (result: { data: { products: IProduct } }) => result.data.products,
             async onQueryStarted(_args, { dispatch, queryFulfilled }) {
                 try {
                     const { data } = await queryFulfilled;

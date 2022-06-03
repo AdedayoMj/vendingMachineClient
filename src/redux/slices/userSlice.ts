@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IUser } from '../api/types';
+import { IChange, IUser } from '../api/types';
 
 interface IUserState {
   user: IUser | null;
+  coinChanges: Partial<IChange> | null;
 }
 
 const initialState: IUserState = {
   user: null,
+  coinChanges: null
 };
 
 export const userSlice = createSlice({
@@ -17,9 +19,12 @@ export const userSlice = createSlice({
     setUser: (state:any, action: PayloadAction<IUser>) => {
       state.user = action.payload;
     },
+    setCoinChanges:(state:any, action: PayloadAction<Partial<IChange>>) => {
+      state.coinChanges = action.payload;
+    },
   },
 });
 
 export default userSlice.reducer;
 
-export const { logout, setUser } = userSlice.actions;
+export const { logout, setUser, setCoinChanges } = userSlice.actions;

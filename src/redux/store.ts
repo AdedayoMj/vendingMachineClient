@@ -14,7 +14,6 @@ import * as rp from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import hardSet from 'redux-persist/lib/stateReconciler/hardSet';
 import { setupListeners } from '@reduxjs/toolkit/dist/query';
-import { createTransform } from 'redux-persist';
 
 
 const persistConfig = {
@@ -33,6 +32,7 @@ const rootReducer = combineReducers({
   [authApi.reducerPath]: authApi.reducer,
   [userApi.reducerPath]: userApi.reducer,
   [productApi.reducerPath]: productApi.reducer,
+
   userState: userReducer,
   productState: productReducer,
 })

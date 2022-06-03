@@ -10,27 +10,17 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './formInput';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { LoadingButton as _LoadingButton } from '@mui/lab';
 import { toast } from 'react-toastify';
 import { useCreateProductMutation, useGetProductsQuery } from '../redux/api/productApi';
 import { useAppSelector } from '../redux/store';
 import { useDispatch } from 'react-redux';
+import { LoadingButton } from './button';
 
 
-const LoadingButton = styled(_LoadingButton)`
-  padding: 0.6rem 0;
-  background-color: #ff8f00;
-  color: #2363eb;
-  font-weight: 500;
-  &:hover {
-    background-color: #ffa940;
-    transform: translateY(-2px);
-  }
-`;
 
 const LinkItem = styled(Link)`
   text-decoration: none;
-  color: #2363eb;
+  color: #073642;
   &:hover {
     text-decoration: underline;
   }
@@ -156,7 +146,7 @@ const FormModal: React.FunctionComponent<IModal> = (props) => {
             textAlign="center"
             component="h1"
             sx={{
-              color: '#ff8f00',
+              color: '#073642',
               fontWeight: 600,
               fontSize: { xs: '1rem', md: '2rem' },
               mb: 2,
