@@ -45,7 +45,8 @@ const Home: React.FunctionComponent = () => {
               <ProductStack />
             </Card>
           </Grid>
-         {role==="buyer"&& <Grid item md={4} sm={12}>
+         {/* {role==="buyer"&&  */}
+         <Grid item md={4} sm={12}>
             <DepositView />
             <Card
               style={{ padding: 25 }}
@@ -58,7 +59,8 @@ const Home: React.FunctionComponent = () => {
             >
               <CurrencyStack currencies={AccesptableCurrency} />
             </Card>
-          </Grid>}
+          </Grid>
+          {/* } */}
         </Grid>
       </Container>
     </Container>
