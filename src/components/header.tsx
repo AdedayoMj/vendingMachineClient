@@ -7,23 +7,40 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  List,
+  Collapse,
 } from '@mui/material';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
 import { useNavigate } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import { useLogoutUserMutation } from '../redux/api/authApi';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircle from '@mui/icons-material/AccountCircle';
 
 import FormModal from './formModal';
 import { LoadingButtonHeader } from './button';
 import { useAppSelector } from '../redux/store';
+import EditUser from './editUser';
 
 const Header = () => {
   const [open, setOpen] = useState(false);
+  const [dropopen, setDropopen] = useState(true);
+  const [openEdit, setOpenEdit] = useState(false);
+
+  const handleClick = () => {
+    setDropopen(!dropopen);
+  };
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const handleOpenEdit = () => {
+    handleCloseInfo()
+    setOpenEdit(true);
+  };
+  const handleCloseEdit = () => setOpenEdit(false);
+
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { role, username } = useAppSelector(
     (state: any) => state.userState.user
@@ -75,7 +92,8 @@ const Header = () => {
       position="static"
       style={{ background: '#073642', boxShadow: 'none' }}
     >
-      <FormModal open={open} handleClose={handleClose} />
+      <FormModal open={open} handleClose={handleClose}/>
+      <EditUser open={openEdit} handleClose={handleCloseEdit} />
       <Container maxWidth="lg">
         <Toolbar>
           <img style={{ height: 70, width: 70 }} alt="logo" src="/itest.png" />
@@ -103,9 +121,18 @@ const Header = () => {
                 </LoadingButtonHeader>
               </>
             )}
+
             {logged_in && (
               <LoadingButtonHeader
                 sx={{ backgroundColor: '#eee' }}
+                onClick={handleOpen}
+              >
+                Add Product
+              </LoadingButtonHeader>
+            )}
+            {logged_in && (
+              <LoadingButtonHeader
+                sx={{ backgroundColor: '#eee', ml: 2 }}
                 onClick={onLogoutHandler}
                 loading={isLoading}
               >
@@ -113,25 +140,16 @@ const Header = () => {
               </LoadingButtonHeader>
             )}
             {logged_in && (
-              <LoadingButtonHeader
-                sx={{ backgroundColor: '#eee', ml: 2 }}
-                onClick={handleOpen}
-              >
-                Add Product
-              </LoadingButtonHeader>
-            )}
-            {logged_in && (
               <div>
                 <IconButton
-               
-               style={{height:40, width:40, marginLeft:10}}
+                  style={{ height: 40, width: 40, marginLeft: 10 }}
                   aria-label="account of current user"
                   aria-controls="menu-appbar"
                   aria-haspopup="true"
                   onClick={handleMenu}
                   color="inherit"
                 >
-                  <AccountCircle style={{height:40, width:40}} />
+                  <AccountCircle style={{ height: 40, width: 40 }} />
                 </IconButton>
                 <Menu
                   id="menu-appbar"
@@ -148,8 +166,21 @@ const Header = () => {
                   open={Boolean(anchorEl)}
                   onClose={handleCloseInfo}
                 >
-                  <MenuItem onClick={handleCloseInfo}>{`UserName: ${username}`}</MenuItem>
-                  <MenuItem onClick={handleCloseInfo}>{`Role: ${role}`}</MenuItem>
+                  <MenuItem onClick={handleClick}>
+                    Profile {dropopen ? <ExpandLess /> : <ExpandMore />}
+                  </MenuItem>
+                  <Collapse in={dropopen} timeout="auto" unmountOnExit>
+                    <Container>
+                      <MenuItem onClick={handleCloseInfo}>
+                        {`UserName: ${username}`}{' '}
+                      </MenuItem>
+                      <MenuItem
+                        onClick={handleCloseInfo}
+                      >{`Role: ${role}`}</MenuItem>
+                    </Container>
+                  </Collapse>
+
+                  <MenuItem onClick={handleOpenEdit}>Modify Account</MenuItem>
                 </Menu>
               </div>
             )}

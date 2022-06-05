@@ -53,6 +53,29 @@ export const productApi = createApi({
                 } catch (error) { }
             },
         }),
+        updateProduct: builder.mutation<IProduct, { product: Partial<ProductInput>, sellerId: string, productId: string }>({
+            query(data) {
+                const newProductData = {
+                    productName: data.product.productName,
+                    amountAvailable: Number(data.product.amountAvailable),
+                    cost: Number(data.product.cost),
+                    sellerId: data.sellerId
+                }
+                return {
+                    url: `product/${data.productId}`,
+                    method: 'PATCH',
+                    body: newProductData,
+                    credentials: 'include',
+                };
+            },
+            transformResponse: (result: { data: { products: IProduct } }) => result.data.products,
+            async onQueryStarted(_args, { dispatch, queryFulfilled }) {
+                try {
+                    const { data } = await queryFulfilled;
+                    await dispatch(setAllProduct(data));
+                } catch (error) { }
+            },
+        }),
         buyProduct: builder.mutation<Partial<IQauntity>, { product: IProduct, quantity: BuyProductInput }>({
 
             query(data) {
@@ -94,5 +117,5 @@ export const productApi = createApi({
     }),
 })
 
-export const { useGetProductsMutation, useCreateProductMutation, useBuyProductMutation, useDeleteProductMutation } = productApi
+export const { useGetProductsMutation, useCreateProductMutation, useBuyProductMutation, useDeleteProductMutation, useUpdateProductMutation } = productApi
 

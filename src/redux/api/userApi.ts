@@ -3,6 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { setUser, setCoinChanges } from '../slices/userSlice';
 import { IChange, IUser } from './types';
 import customFetchBase from './customeFetchBase';
+import { EditUserAccount } from '../../components/editUser';
 
 
 export const userApi = createApi({
@@ -15,6 +16,25 @@ export const userApi = createApi({
                 return {
                     url: 'user/getUser',
                     method: 'GET',
+                    credentials: 'include',
+                };
+            },
+            transformResponse: (result: { data: { user: IUser } }) =>
+                result.data.user,
+            async onQueryStarted(args, { dispatch, queryFulfilled }) {
+                try {
+                    const { data } = await queryFulfilled;
+
+                    dispatch(setUser(data));
+                } catch (error) { }
+            },
+        }),
+        editUser: builder.mutation<IUser, EditUserAccount>({
+            query(data) {
+                return {
+                    url: 'user/updateUser',
+                    method: 'PATCH',
+                    body: data,
                     credentials: 'include',
                 };
             },
@@ -95,5 +115,6 @@ export const {
     useDepositUserAccountMutation,
     useResetAccountMutation,
     useGetUserMutation,
-    useGetChangeMutation
+    useGetChangeMutation,
+    useEditUserMutation
 } = userApi;

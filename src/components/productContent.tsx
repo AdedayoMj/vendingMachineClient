@@ -5,19 +5,21 @@ import {
   CardActions,
   Modal,
   Box,
+  Menu,
+  MenuItem,
   Typography,
   IconButton,
+  CardContent,
 } from '@mui/material';
 import Skeleton from '@mui/material/Skeleton';
 import { IProduct } from '../redux/api/types';
-
 import { toast } from 'react-toastify';
 import { useCookies } from 'react-cookie';
 import {
   useBuyProductMutation,
   useGetProductsMutation,
 } from '../redux/api/productApi';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { object, string, TypeOf } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import FormInput from './formInput';
@@ -27,6 +29,11 @@ import DeleteModal from './deleteModal';
 import DeleteOutlinedIcon from '@mui/icons-material/DeleteOutlined';
 import { LoadingButton } from './button';
 import { useAppSelector } from '../redux/store';
+import EditIcon from '@mui/icons-material/Edit';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
+import FormModal from './formModal';
+import EditProduct from './editProduct';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -57,10 +64,14 @@ export type BuyProductInput = TypeOf<typeof buyProductSchema>;
 
 const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   const [open, setOpen] = useState(false);
+  const [openEdit, setOpenEdit] = useState(false);
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const { role } = useAppSelector((state: any) => state.userState.user);
   const handleDialogOpen = () => {
     reset();
+    handleCloseInfo();
     setOpenDeleteDialog(true);
   };
   const handleDialogClose = () => setOpenDeleteDialog(false);
@@ -72,6 +83,23 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   const methods = useForm<BuyProductInput>({
     resolver: zodResolver(buyProductSchema),
   });
+
+  const handleMenuMore = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleCloseInfo = () => {
+    setAnchorEl(null);
+  };
+
+  const handleOpenEdit = () => {
+    reset();
+    handleCloseInfo();
+    setOpenEdit(true);
+  };
+  const handleCloseEdit = () => {
+    setOpenEdit(false);
+  };
 
   const [cookies] = useCookies(['logged_in']);
   const logged_in = cookies.logged_in;
@@ -95,6 +123,7 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
     reset();
     handleClose();
   };
+
   useEffect(() => {
     if (isSuccess) {
       Promise.all([getProducts(), getUser(), getChange()]);
@@ -137,6 +166,7 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
 
   return (
     <Grid item md={role === 'buyer' ? 4 : 3} sm={4} xs={6}>
+      <EditProduct open={openEdit} handleClose={handleCloseEdit} product={product} />
       {product.amountAvailable > 0 && (
         <Card style={{ width: '100%', minHeight: 150 }}>
           <CardHeader
@@ -149,8 +179,8 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
               minHeight: 40,
             }}
             action={
-              <IconButton aria-label="settings" onClick={handleDialogOpen}>
-                <DeleteOutlinedIcon style={{ color: 'red' }} />
+              <IconButton aria-label="settings" onClick={handleMenuMore}>
+                <MoreVertIcon />
               </IconButton>
             }
             titleTypographyProps={{ variant: 'h6' }}
@@ -174,25 +204,48 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
               )
             }
           />
-          {loading ? (
-            <Skeleton
-              sx={{ height: 70 }}
-              animation="wave"
-              variant="rectangular"
-            />
-          ) : (
-            <Typography
-              sx={{
-                fontWeight: 400,
-                alignContent: 'center',
-                textAlign: 'center',
-                fontSize: { xs: '1rem', md: '1.2rem' },
-                mb: 2,
-                letterSpacing: 1,
-              }}
-            >{`Qty: ${product.amountAvailable}`}</Typography>
-          )}
-
+          <Menu
+            id="basic-menu"
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={handleCloseInfo}
+            MenuListProps={{
+              'aria-labelledby': 'basic-button',
+            }}
+          >
+            <MenuItem onClick={handleOpenEdit}>
+              <IconButton aria-label="settings">
+                <EditIcon style={{ color: '#073642' }} />
+              </IconButton>{' '}
+              Edit
+            </MenuItem>
+            <MenuItem onClick={handleDialogOpen}>
+              <IconButton aria-label="settings">
+                <DeleteOutlinedIcon style={{ color: 'red' }} />
+              </IconButton>{' '}
+              Delete
+            </MenuItem>
+          </Menu>
+          <CardContent>
+            {loading ? (
+              <Skeleton
+                sx={{ height: 70 }}
+                animation="wave"
+                variant="rectangular"
+              />
+            ) : (
+              <Typography
+                sx={{
+                  fontWeight: 400,
+                  alignContent: 'center',
+                  textAlign: 'center',
+                  fontSize: { xs: '1rem', md: '1.2rem' },
+                  mb: 2,
+                  letterSpacing: 1,
+                }}
+              >{`Qty: ${product.amountAvailable}`}</Typography>
+            )}
+          </CardContent>
           <CardActions
             style={{
               marginTop: 20,

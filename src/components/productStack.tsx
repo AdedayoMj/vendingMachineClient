@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
 import ProductContent from './productContent';
 import { useGetProductsMutation } from '../redux/api/productApi';
@@ -5,10 +6,20 @@ import { Typography } from '@mui/material';
 import { useAppSelector } from '../redux/store';
 
 const ProductStack: React.FunctionComponent = (props) => {
-  const [get,{ isLoading, isError }] = useGetProductsMutation();
+  const [loading, setLoading ]= useState(true)
+  const [get,{ data, isLoading, isError, isSuccess }] = useGetProductsMutation();
+
+
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false)
+    }, 2000);
+  }, [isLoading, Error, isSuccess])
 
   let productData = useAppSelector((state: any) => state.productState);
 
+  
 
   return (
     <Grid container spacing={3} style={{ padding: 25 }}>
@@ -20,7 +31,7 @@ const ProductStack: React.FunctionComponent = (props) => {
       {productData.products? (
         productData.products?.map((product, index) => {
           return (
-            <ProductContent key={index} product={product} loading={isLoading} />
+            <ProductContent key={index} product={product} loading={loading} />
           );
         })
       ) : (

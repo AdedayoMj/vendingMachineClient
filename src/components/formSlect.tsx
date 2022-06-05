@@ -13,18 +13,20 @@ import { Controller, useFormContext } from 'react-hook-form';
 type IFormInputProps = {
   name: string;
   label: string;
+  defaultValue?: string;
 } & InputProps;
 
-const FormSelect: FC<IFormInputProps> = ({ name, label, ...otherProps }) => {
+const FormSelect: FC<IFormInputProps> = ({ name, label, defaultValue, ...otherProps }) => {
   const {
     control,
     formState: { errors },
   } = useFormContext();
+
   return (
     <Controller
       control={control}
       name={name}
-      defaultValue=''
+      defaultValue={defaultValue ? defaultValue : ''}
       rules={{required:true}}
       render={({ field }) => (
         <FormControl fullWidth sx={{ mb: 2 }}>
@@ -36,7 +38,6 @@ const FormSelect: FC<IFormInputProps> = ({ name, label, ...otherProps }) => {
           </Typography>
           <RadioGroup
             aria-label={label}
-            
             {...field}
             name={name}
           >

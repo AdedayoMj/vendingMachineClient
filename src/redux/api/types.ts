@@ -38,6 +38,7 @@ export interface ITransact {
   totalCostOfProduuct: number;
 }
 
+
 export type IProductIndex = {
   product: IProduct[],
 
