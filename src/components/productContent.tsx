@@ -165,7 +165,7 @@ const ProductContent: React.FunctionComponent<ProductContentI> = (props) => {
   let price = parseFloat(String(product.cost)).toFixed(2);
 
   return (
-    <Grid item md={role === 'buyer' ? 4 : 3} sm={4} xs={6}>
+    <Grid item md={4 } sm={4} xs={6}>
       <EditProduct open={openEdit} handleClose={handleCloseEdit} product={product} />
       {product.amountAvailable > 0 && (
         <Card style={{ width: '100%', minHeight: 150 }}>

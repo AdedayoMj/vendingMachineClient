@@ -49,10 +49,7 @@ const EditUser: React.FunctionComponent<IModal> = (props) => {
   const methods = useForm<EditUserAccount>({
     resolver: zodResolver(editUserSchema),
   });
-  const closeModal = () => {
-    handleClose();
-    reset();
-  };
+
   //API Login Mutation
   const [editUser, { isLoading, isError, error, isSuccess }] =
   useEditUserMutation();
@@ -67,8 +64,9 @@ const EditUser: React.FunctionComponent<IModal> = (props) => {
 
   useEffect(() => {
     if (isSuccess) {
+      handleClose();
       toast.success('Your account has been modified ');
-      closeModal();
+      
     }
 
     if (isError) {
@@ -102,7 +100,7 @@ const EditUser: React.FunctionComponent<IModal> = (props) => {
   return (
     <Modal
       open={open}
-      onClose={closeModal}
+      onClose={handleClose}
       aria-labelledby="modal-modal-title"
       aria-describedby="modal-modal-description"
     >

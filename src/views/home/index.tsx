@@ -33,7 +33,7 @@ const Home: React.FunctionComponent = () => {
     >
       <Container style={{ paddingTop: 70 }}>
         <Grid container spacing={3}>
-          <Grid item md={role==="buyer"?8:12} sm={12}>
+          <Grid item md={8} sm={12}>
             <Card
               sx={{
                 minHeight: 200,
